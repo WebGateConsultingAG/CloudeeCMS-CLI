@@ -1,0 +1,184 @@
+/*
+ * Copyright WebGate Consulting AG, 2020
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at:
+ *
+ * http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or
+ * implied. See the License for the specific language governing
+ * permissions and limitations under the License.
+ *
+ */
+import fs from 'fs';
+import path from 'path';
+import { CHARSET, FieldVars, DISTPATH, FieldTypes, SELECTVALUESPATH, TemplateTypes, CDNPATH, TEMPLATEPATH } from './constants';
+import { Field } from '../models/field';
+import { Message } from './message';
+import { Template } from '../models/template';
+import AdmZip from 'adm-zip';
+import { Text } from './texts';
+import { request } from 'http';
+
+export class FileHelper {
+  constructor() {}
+  static readFiles(folderName) {
+    return fs.readdirSync(folderName);
+  }
+
+  static createTemplateFromFile(templateFile, templateType) {
+    const fileNameArray = templateFile.split('.');
+    fileNameArray.pop();
+    const fileName = fileNameArray.join('.');
+    const data = fs.readFileSync(path.join(templateType.path, templateFile), CHARSET);
+    const template = Template.createTemplate(data, templateType, fileName);
+    if (templateType.type === TemplateTypes.LAYOUTBLOCK.type) {
+      template.custFields = [];
+    } else {
+      template.custFields = this.addFields(data);
+    }
+    return template;
+  }
+
+  static addFields(body) {
+    const fields = [];
+    if (body.indexOf(FieldVars.ESCAPEDSTART) > -1 || body.indexOf(FieldVars.UNESCAPEDSTART) > -1) {
+      const escapedFieldArr = body.split(FieldVars.ESCAPEDSTART).slice(1);
+      const unescapedFieldArr = body.split(FieldVars.UNESCAPEDSTART).slice(1);
+      const fieldArr = escapedFieldArr.concat(unescapedFieldArr);
+      fieldArr.forEach((field) => {
+        const fieldName = this.getFieldName(field);
+        if (fieldName) {
+          if (fieldName.indexOf('env.') !== 0 && !this.fieldExist(fields, fieldName)) {
+            fields.push(Field.createField(fieldName));
+          }
+        }
+      });
+    }
+    return fields;
+  }
+
+  static fieldExist(fields, fieldName) {
+    return fields.some((field) => field.fldName === fieldName);
+  }
+
+  static getFieldName(sequence) {
+    return sequence.indexOf(FieldVars.END) > 0 ? sequence.split(FieldVars.END)[0] : null;
+  }
+
+  static writeCloudeeFile(template) {
+    fs.writeFileSync(path.join(DISTPATH, TEMPLATEPATH, template.id + '.json'), JSON.stringify(template), CHARSET, function (err) {
+      if (e) {
+        Message.error(e);
+        Message.reset();
+      }
+    });
+  }
+
+  static existsTemplatePathCreateIfNot() {
+    const dbPath = path.join(DISTPATH, TEMPLATEPATH);
+    if (!fs.existsSync(dbPath)) {
+      fs.mkdirSync(dbPath);
+    }
+  }
+
+  static writePackageToDist(packageJson) {
+    fs.writeFileSync(path.join(DISTPATH, 'package.json'), JSON.stringify(packageJson), CHARSET, function (err) {
+      if (e) {
+        Message.error(e);
+        Message.reset();
+      }
+    });
+  }
+
+  static clearDistFolder() {
+    const filesAndFolders = this.readFiles(DISTPATH);
+    filesAndFolders.forEach((pathToRemove) => {
+      this.deleteRecursive(path.join(DISTPATH, pathToRemove));
+    });
+  }
+
+  static deleteRecursive(pathToRemove) {
+    const exists = fs.existsSync(pathToRemove);
+    const stats = exists && fs.statSync(pathToRemove);
+    const isDirectory = exists && stats.isDirectory();
+    if (isDirectory) {
+      const filesAndFolders = this.readFiles(pathToRemove);
+      filesAndFolders.forEach((fileOrFolder) => {
+        this.deleteRecursive(path.join(pathToRemove, fileOrFolder));
+      });
+      fs.rmdirSync(pathToRemove);
+    } else {
+      fs.unlinkSync(pathToRemove);
+    }
+  }
+
+  static addSelectValues(fields) {
+    if (fields) {
+      fields.forEach((field) => {
+        if (field.fldType === FieldTypes.DROPDOWN) {
+          if (field.selectValueFile) {
+            const endingArr = field.selectValueFile.split('.');
+            const ending = endingArr[endingArr.length - 1];
+            const selValues = fs.readFileSync(path.join(SELECTVALUESPATH, field.selectValueFile), CHARSET);
+            field.selectionValues = selValues;
+            if (ending === 'json') {
+              field.fldValueType = 'json';
+              field.selVal = JSON.parse(selValues);
+            } else {
+              field.fldValueType = 'text';
+            }
+          }
+        }
+        delete field.selectValueFile;
+      });
+    }
+  }
+  static writeCDNFiles() {
+    this.copyRecursive(CDNPATH, path.join(DISTPATH, CDNPATH));
+  }
+
+  static copyRecursive(pathToCopy, destination) {
+    const exists = fs.existsSync(pathToCopy);
+    const stats = exists && fs.statSync(pathToCopy);
+    const isDirectory = exists && stats.isDirectory();
+    if (isDirectory) {
+      fs.mkdirSync(destination);
+      fs.readdirSync(pathToCopy).forEach((childToCopy) => {
+        FileHelper.copyRecursive(path.join(pathToCopy, childToCopy), path.join(destination, childToCopy));
+      });
+    } else {
+      fs.copyFileSync(pathToCopy, destination);
+    }
+  }
+
+  static buildCloudeeZip() {
+    const zip = new AdmZip();
+    zip.addLocalFolder(DISTPATH);
+    zip.writeZip(path.join(DISTPATH, 'design.zip'));
+  }
+
+  static getPackageData(info) {
+    Message.info(Text.parse(Text.packageInfoTitle, info.data.filename));
+    Message.info(Text.parse(Text.packageInfoCopyright, info.data.copyright));
+    Message.info(Text.parse(Text.packageDescription, info.data.description));
+    var fileUrl = info.data.url;
+    console.log(fileUrl);
+    var fileName = info.data.filename;
+    request({ url: fileUrl, encoding: null }, function (err, resp, body) {
+      if (err) throw err;
+      fs.writeFileSync(fileName, body, function (err) {
+        Message.info(Text.packageDownloadComplete);
+      });
+      this.extractPackageData(fileName);
+    });
+  }
+
+  static extractPackageData(data, fileName) {
+    fs.writeFileSync(fileName, data);
+  }
+}

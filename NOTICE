@@ -1,0 +1,39 @@
+## License remarks
+
+CloudeeCMS - CLI
+
+Copyright 2020 WebGate Consulting AG
+Licensed under the Apache License, Version 2.0
+
+https://www.cloudee-cms.com
+https://www.webgate.biz
+
+This project uses additional software packages by:
+
+ADM-ZIP for NodeJS
+Licensed under MIT
+Available from github.com/cthackers/adm-zip
+Copyright (c) 2012 Another-D-Mention Software and other contributors, 
+http://www.another-d-mention.ro/
+
+esm
+Licensed under MIT
+Available from https://github.com/standard-things/esm
+Copyright esm contributors
+
+js-yaml
+Licensed under MIT
+Available from https://github.com/nodeca/js-yaml
+Copyright (C) 2011-2015 by Vitaly Puzrin
+
+uuid
+Licensed under MIT
+Available from https://github.com/uuidjs/uuid/blob/master/LICENSE.md
+Copyright (c) 2010-2020 Robert Kieffer and other contributors
+
+prettier
+Licensed under MIT
+Available from github.com/prettier/prettier
+Copyright © James Long and contributors
+
+

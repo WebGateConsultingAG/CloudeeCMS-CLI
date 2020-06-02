@@ -1,9 +1,14 @@
 {
   "name": "@webgate/cloudee-cli",
-  "version": "0.0.1",
+  "version": "0.0.3",
+  "homepage": "https://www.cloudee-cms.com/",
   "description": "CloudeeCMS CLI template builder",
   "bin": {
     "cloudee": "bin/cloudee"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/WebGateConsultingAG/CloudeeCMS-CLI"
   },
   "publishConfig": {
     "access": "public"

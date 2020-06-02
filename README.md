@@ -7,7 +7,7 @@ CloudeeCMS-CLI provides an easy way to create your design for [CloudeeCMS](https
 ## Installation
 
 ```bash
-npm install @webgate/cloudee-cli
+npm i -g @webgate/cloudee-cli
 ```
 
 ### Init

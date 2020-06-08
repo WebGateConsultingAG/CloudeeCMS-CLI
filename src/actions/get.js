@@ -43,7 +43,8 @@ export class TemplateGetter {
         });
       })
       .on('error', (err) => {
-        console.log('Error: ' + err.message);
+        Message.error('Error while getting package info: ', err);
+        Message.info('Get not possible.');
       });
   }
   //load specified Design from CloudeeCMS S3
@@ -69,7 +70,8 @@ export class TemplateGetter {
         });
       })
       .on('error', (err) => {
-        console.log('Error: ' + err.message);
+        Message.error('Error while getting package.zip: ', err);
+        Message.info('Get not possible.');
       });
   }
 }

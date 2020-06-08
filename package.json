@@ -1,11 +1,7 @@
 {
   "name": "@webgate/cloudee-cli",
-<<<<<<< HEAD
-  "version": "0.0.3",
+  "version": "0.1.0",
   "homepage": "https://www.cloudee-cms.com/",
-=======
-  "version": "0.0.2",
->>>>>>> master
   "description": "CloudeeCMS CLI template builder",
   "bin": {
     "cloudee": "bin/cloudee"

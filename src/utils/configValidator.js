@@ -30,6 +30,7 @@ export class ConfigValidator {
       const okey = template.okey;
       if (!template.title) {
         Message.error(Text.parse(Text.validatorTemplateNoTitle, okey));
+        valid = false;
       }
       if (!template.descr) {
         Message.warn(Text.parse(Text.validatorTemplateNoDescription, okey));
@@ -56,16 +57,18 @@ export class ConfigValidator {
     if (fields) {
       Object.keys(fields).forEach((key) => {
         const field = fields[key];
-        if (!field.fldName) {
-          Message.error(Text.parse(Text.configMissingFieldName), okey);
-          fieldsValid = false;
-        }
-        if (!field.fldType || !Object.values(FieldTypes).includes(field.fldType)) {
-          Message.error(Text.parse(Text.configFieldWrongType, field.fldName, okey, Object.values(FieldTypes).join()));
-          fieldsValid = false;
-        }
-        if (!field.fldTitle) {
-          Message.warn(Text.parse(Text.configFieldMissingTitle, field.fldName, okey));
+        if (!field.ignore) {
+          if (!field.fldName) {
+            Message.error(Text.parse(Text.configMissingFieldName), okey);
+            fieldsValid = false;
+          }
+          if (!field.fldType || !Object.values(FieldTypes).includes(field.fldType)) {
+            Message.error(Text.parse(Text.configFieldWrongType, field.fldName, okey, Object.values(FieldTypes).join()));
+            fieldsValid = false;
+          }
+          if (!field.fldTitle) {
+            Message.warn(Text.parse(Text.configFieldMissingTitle, field.fldName, okey));
+          }
         }
       });
     }

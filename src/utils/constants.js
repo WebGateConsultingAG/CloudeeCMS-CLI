@@ -40,7 +40,25 @@ export const TemplateTypes = {
     prefix: 'F_',
   },
 };
-
+export const SYSTEM_FIELDNAMES = [
+  'sidenav',
+  'myBodyField',
+  'title',
+  'opath',
+  'dt',
+  'sitemap',
+  'ftindex',
+  'layout',
+  'id',
+  'otype',
+  'descr',
+  'keywords',
+  'publishDT',
+  'updateDT',
+  'env.CDNWEBURL',
+  'env.navtree',
+  'myAuthorField',
+];
 export const VERSION = '0.0.1';
 export const CONFIGPATH = 'config.yaml';
 export const DISTPATH = 'Dist';

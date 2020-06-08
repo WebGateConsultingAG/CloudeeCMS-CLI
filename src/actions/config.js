@@ -16,7 +16,7 @@
  */
 import fs from 'fs';
 import yaml from 'js-yaml';
-import { CHARSET, CONFIGPATH, TemplateTypes, FieldTypes } from '../utils/constants';
+import { CHARSET, CONFIGPATH, TemplateTypes, FieldTypes, SYSTEM_FIELDNAMES } from '../utils/constants';
 import { FileHelper } from '../utils/fileHelper';
 import { TemplateConfig } from '../models/TemplateConfig';
 import { v4 as uuidv4 } from 'uuid';
@@ -63,25 +63,36 @@ export class Config {
   }
 
   static chkAndAddFields(templateConfig, foundFields) {
-    const fields = templateConfig.custFields;
-    foundFields.forEach((field) => {
-      const existingFieldArr = fields.filter((configField) => {
-        return (
-          configField.fldName === field.fldName || (field.fldName.indexOf('doc.') === 0 && field.fldName.substr(4) === configField.fldName)
-        );
-      });
-      if (existingFieldArr && existingFieldArr.length > 0) {
-        const existingField = existingFieldArr[0];
-        if (existingField.fldType === FieldTypes.DROPDOWN && !existingField.selectValueFile) {
-          existingField.selectValueFile = null;
-        }
-      } else {
-        if (!FileHelper.fieldExist(fields, field)) {
-          fields.push(field);
+    let fields = templateConfig.custFields;
+    if (!fields) {
+      fields = [];
+    }
+    foundFields.forEach((foundField) => {
+      if (!this.isSystemField(foundField.fldName)) {
+        const existingFieldArr = fields.filter((configField) => {
+          return (
+            configField.fldName === foundField.fldName ||
+            (foundField.fldName.indexOf('doc.') === 0 && foundField.fldName.substr(4) === configField.fldName)
+          );
+        });
+        if (!existingFieldArr || existingFieldArr.length === 0) {
+          if (!FileHelper.fieldExist(fields, foundField)) {
+            fields.push(foundField);
+          }
         }
       }
     });
+
+    fields.forEach((field) => {
+      if (field.fldType === FieldTypes.DROPDOWN && !field.selectValueFile) {
+        field.selectValueFile = null;
+      }
+    });
     templateConfig.custFields = fields;
+  }
+
+  static isSystemField(fieldName) {
+    return SYSTEM_FIELDNAMES.includes(fieldName);
   }
 
   static getBaseContent() {

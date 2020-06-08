@@ -74,7 +74,7 @@ Text.configFieldWrongType = 'The field %s in your template %s has no or an inval
 Text.configFieldMissingTitle = 'The field %s in your template %s has no title attribute!';
 
 Text.validatorNoTitle = 'Your package has no title! Please define a title in your config.yaml';
-Text.validatorTemplateNoTitle = 'Your template % must have a title!';
+Text.validatorTemplateNoTitle = 'Your template %s must have a title!';
 Text.validatorTemplateNoDescription = 'Your template %s has no description!';
 Text.validatorTemplateNoId = 'Your template %s must have an id!';
 Text.validatorNoAccess = 'Your template %s has defined restrictedChilds but the accepts array is missing.';

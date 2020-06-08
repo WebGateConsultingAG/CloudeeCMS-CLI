@@ -66,7 +66,9 @@ export class Builder {
           template.restrictChilds = configTemplateFile.restrictChilds;
           template.accepts = configTemplateFile.accepts;
         }
-        template.custFields = configTemplateFile.custFields;
+        template.custFields = configTemplateFile.custFields.filter((custField) => {
+          return !custField.ignore;
+        });
         FileHelper.addSelectValues(template.custFields);
         FileHelper.writeCloudeeFile(template);
         count++;

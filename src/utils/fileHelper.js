@@ -36,11 +36,7 @@ export class FileHelper {
     const fileName = fileNameArray.join('.');
     const data = fs.readFileSync(path.join(templateType.path, templateFile), CHARSET);
     const template = Template.createTemplate(data, templateType, fileName);
-    if (templateType.type === TemplateTypes.LAYOUTBLOCK.type) {
-      template.custFields = [];
-    } else {
-      template.custFields = this.addFields(data);
-    }
+    template.custFields = this.addFields(data);
     return template;
   }
 
@@ -51,8 +47,11 @@ export class FileHelper {
       const unescapedFieldArr = body.split(FieldVars.UNESCAPEDSTART).slice(1);
       const fieldArr = escapedFieldArr.concat(unescapedFieldArr);
       fieldArr.forEach((field) => {
-        const fieldName = this.getFieldName(field);
+        let fieldName = this.getFieldName(field);
         if (fieldName) {
+          if (fieldName.indexOf('doc.') === 0) {
+            fieldName = fieldName.substr(4);
+          }
           if (fieldName.indexOf('env.') !== 0 && !this.fieldExist(fields, fieldName)) {
             fields.push(Field.createField(fieldName));
           }
@@ -128,9 +127,10 @@ export class FileHelper {
             field.selectionValues = selValues;
             if (ending === 'json') {
               field.fldValueType = 'json';
-              field.selVal = JSON.parse(selValues);
+              field.selValues = JSON.parse(selValues);
             } else {
               field.fldValueType = 'text';
+              field.selValues = this.createJsonFromJsonSelect(selValues);
             }
           }
         }
@@ -138,6 +138,18 @@ export class FileHelper {
       });
     }
   }
+
+  static createJsonFromJsonSelect(selValues) {
+    const values = selValues.split('\n');
+    const selVals = [];
+    values.forEach((value) => {
+      value = value.replace('\r', '');
+      const selectValue = value.split('|');
+      selVals.push({ val: selectValue[1], label: selectValue[0] });
+    });
+    return selVals;
+  }
+
   static writeCDNFiles() {
     this.copyRecursive(CDNPATH, path.join(DISTPATH, CDNPATH));
   }
@@ -167,7 +179,6 @@ export class FileHelper {
     Message.info(Text.parse(Text.packageInfoCopyright, info.data.copyright));
     Message.info(Text.parse(Text.packageDescription, info.data.description));
     var fileUrl = info.data.url;
-    console.log(fileUrl);
     var fileName = info.data.filename;
     request({ url: fileUrl, encoding: null }, function (err, resp, body) {
       if (err) throw err;

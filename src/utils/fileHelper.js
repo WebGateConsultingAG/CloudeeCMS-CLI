@@ -89,9 +89,9 @@ export class FileHelper {
   }
 
   static writeCloudeeFile(template) {
-    fs.writeFileSync(path.join(DISTPATH, TEMPLATEPATH, template.id + '.json'), JSON.stringify(template), CHARSET, function (err) {
-      if (e) {
-        Message.error(e);
+    fs.writeFileSync(path.join(DISTPATH, TEMPLATEPATH, template.id + '.json'), JSON.stringify(template), CHARSET, function (error) {
+      if (error) {
+        Message.error(error);
         Message.reset();
       }
     });
@@ -109,9 +109,9 @@ export class FileHelper {
   }
 
   static writePackageToDist(packageJson) {
-    fs.writeFileSync(path.join(DISTPATH, 'package.json'), JSON.stringify(packageJson), CHARSET, function (err) {
-      if (e) {
-        Message.error(e);
+    fs.writeFileSync(path.join(DISTPATH, 'package.json'), JSON.stringify(packageJson), CHARSET, function (error) {
+      if (error) {
+        Message.error(error);
         Message.reset();
       }
     });
@@ -196,7 +196,7 @@ export class FileHelper {
     var fileName = info.data.filename;
     request({ url: fileUrl, encoding: null }, function (err, resp, body) {
       if (err) throw err;
-      fs.writeFileSync(fileName, body, function (err) {
+      fs.writeFileSync(fileName, body, function () {
         Message.info(Text.packageDownloadComplete);
       });
       this.extractPackageData(fileName);

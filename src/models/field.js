@@ -14,7 +14,7 @@
  * permissions and limitations under the License.
  *
  */
- export class Field {
+export class Field {
   constructor() {
     this.fldTitle = null;
     this.fldType = null;

@@ -1,5 +1,3 @@
-import { CDNPATH, TEMPLATEPATH } from '../utils/constants';
-
 /*
  * Copyright WebGate Consulting AG, 2020
  *
@@ -16,6 +14,7 @@ import { CDNPATH, TEMPLATEPATH } from '../utils/constants';
  * permissions and limitations under the License.
  *
  */
+import { CDNPATH, TEMPLATEPATH } from '../utils/constants';
 export class Package {
   constructor(config) {
     this.type = 'CloudeeCMS-Package';
@@ -23,7 +22,7 @@ export class Package {
     this.description = config.description;
     this.categories = ['Website Templates'];
     this.packageformat = '1.0';
-    this.cliVersion = '0.1';
+    this.cliVersion = '0.1.1';
     this.resources = {
       variables: config.environmentVariables,
       database: TEMPLATEPATH,

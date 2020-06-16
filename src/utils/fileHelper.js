@@ -16,13 +16,24 @@
  */
 import fs from 'fs';
 import path from 'path';
-import { CHARSET, FieldVars, DISTPATH, FieldTypes, SELECTVALUESPATH, TemplateTypes, CDNPATH, TEMPLATEPATH } from './constants';
+import {
+  CHARSET,
+  FieldVars,
+  DISTPATH,
+  FieldTypes,
+  SELECTVALUESPATH,
+  CDNPATH,
+  TEMPLATEPATH,
+  GLOBALSCRIPTSPATH,
+  GLOBALSCRIPTSFILENAME,
+} from './constants';
 import { Field } from '../models/field';
 import { Message } from './message';
 import { Template } from '../models/template';
 import AdmZip from 'adm-zip';
 import { Text } from './texts';
 import { request } from 'http';
+import { GlobalScript } from '../models/globalScript';
 
 export class FileHelper {
   constructor() {}
@@ -38,6 +49,14 @@ export class FileHelper {
     const template = Template.createTemplate(data, templateType, fileName);
     template.custFields = this.addFields(data);
     return template;
+  }
+
+  static createGlobalScriptFromFile(scriptFile) {
+    const fileNameArray = scriptFile.split('.');
+    fileNameArray.pop();
+    const fName = fileNameArray.join('.');
+    const body = fs.readFileSync(path.join(GLOBALSCRIPTSPATH, scriptFile), CHARSET);
+    return new GlobalScript(fName, body);
   }
 
   static addFields(body) {
@@ -76,6 +95,10 @@ export class FileHelper {
         Message.reset();
       }
     });
+  }
+
+  static writeGlobalScriptFile(globalScripts) {
+    fs.writeFileSync(path.join(DISTPATH, GLOBALSCRIPTSFILENAME), JSON.stringify(globalScripts), CHARSET);
   }
 
   static existsTemplatePathCreateIfNot() {

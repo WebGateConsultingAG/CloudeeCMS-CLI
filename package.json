@@ -16,19 +16,20 @@
   "main": "index.js",
   "scripts": {
     "pretest": "eslint --ignore-path .gitignore .",
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "mocha --require esm"
   },
   "author": "Mirko Eberlein",
   "license": "Apache-2.0",
   "dependencies": {
     "adm-zip": "^0.4.14",
-    "babel-eslint": "^10.1.0",
     "esm": "^3.2.25",
     "js-yaml": "^3.13.1",
     "uuid": "^7.0.3"
   },
   "devDependencies": {
     "eslint": "^7.2.0",
-    "prettier": "^2.0.5"
+    "babel-eslint": "^10.1.0",
+    "prettier": "^2.0.5",
+    "mocha": "^8.0.1"
   }
 }

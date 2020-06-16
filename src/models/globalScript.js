@@ -14,20 +14,9 @@
  * permissions and limitations under the License.
  *
  */
-import { CDNPATH, TEMPLATEPATH, GLOBALSCRIPTSFILENAME } from '../utils/constants';
-export class Package {
-  constructor(config) {
-    this.type = 'CloudeeCMS-Package';
-    this.title = config.title;
-    this.description = config.description;
-    this.categories = ['Website Templates'];
-    this.packageformat = '1.0';
-    this.cliVersion = '0.1.1';
-    this.globalfunctions = GLOBALSCRIPTSFILENAME;
-    this.resources = {
-      variables: config.environmentVariables,
-      database: TEMPLATEPATH,
-      filesCDN: CDNPATH,
-    };
+export class GlobalScript {
+  constructor(fName, body) {
+    this.fName = fName;
+    this.body = body;
   }
 }

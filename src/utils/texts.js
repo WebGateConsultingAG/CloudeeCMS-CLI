@@ -64,6 +64,8 @@ Text.buildPackageInfoComplete = 'Creating package info completed.';
 Text.buildCreateDesignZip = 'Creating CloudeeCMS package ZIP.';
 Text.buildComplete = 'CloudeeCMS package ZIP completed.';
 Text.buildTemplateInfo = '%s templateType.type %s';
+Text.createGlobalScripts = 'Create Global Scripts';
+Text.createGlobalScriptsComplete = 'Create Global Scripts Complete';
 Text.generalErrorAbort = 'Cloudee CLI aborted with errors.';
 
 Text.cliNoAction = 'No action specified!';

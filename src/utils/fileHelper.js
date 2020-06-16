@@ -144,17 +144,8 @@ export class FileHelper {
       fields.forEach((field) => {
         if (field.fldType === FieldTypes.DROPDOWN) {
           if (field.selectValueFile) {
-            const endingArr = field.selectValueFile.split('.');
-            const ending = endingArr[endingArr.length - 1];
             const selValues = fs.readFileSync(path.join(SELECTVALUESPATH, field.selectValueFile), CHARSET);
-            field.selectionValues = selValues;
-            if (ending === 'json') {
-              field.fldValueType = 'json';
-              field.selValues = JSON.parse(selValues);
-            } else {
-              field.fldValueType = 'text';
-              field.selValues = this.createJsonFromJsonSelect(selValues);
-            }
+            field.selValues = JSON.parse(selValues);
           }
         }
         delete field.selectValueFile;

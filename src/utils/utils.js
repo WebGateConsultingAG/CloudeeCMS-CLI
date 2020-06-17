@@ -1,4 +1,3 @@
-import { Message } from './message';
 import { Text } from './texts';
 import { TemplateTypes } from './constants';
 
@@ -12,8 +11,7 @@ export class Utils {
       case TemplateTypes.MICROTEMPLATE.type:
         return TemplateTypes.MICROTEMPLATE;
       default:
-        Message.info(Text.parse(Text.utilNoTemplateTypeFound, type));
-        return null;
+        throw new Error(Text.parse(Text.utilNoTemplateTypeFound, type), 'utils.js', 14);
     }
   }
 }

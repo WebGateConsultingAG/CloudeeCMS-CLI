@@ -22,11 +22,8 @@ const { Template } = require('../src/models/template');
 const { TemplateTypes, GLOBALSCRIPTSFILENAME } = require('../src/utils/constants');
 const { Config } = require('../src/actions/config');
 const { Package } = require('../src/models/package');
-
-this.fldTitle = null;
-this.fldType = null;
-this.fldName = null;
-
+const { Utils } = require('../src/utils/utils');
+const { Text } = require('../src/utils/texts');
 describe('Models', function () {
   describe('#Field', function () {
     it('should have the correct values', function () {
@@ -82,6 +79,24 @@ describe('Models', function () {
       assert(packageObject.categories.length === 1);
       assert(packageObject.categories[0] === 'Website Templates');
       assert(packageObject.globalfunctions === GLOBALSCRIPTSFILENAME);
+    });
+  });
+});
+describe('Actions', function () {
+  describe('#Init', function () {
+    it('should create all needed folders', function () {});
+  });
+});
+describe('Utils', function () {
+  describe('#Package', function () {
+    it('found template and get null if type is not in list', function () {
+      const templateType = Utils.findTemplateType(TemplateTypes.LAYOUT.type);
+      assert(templateType.type === TemplateTypes.LAYOUT.type);
+      assert(templateType.path === TemplateTypes.LAYOUT.path);
+      assert(templateType.config === TemplateTypes.LAYOUT.config);
+      assert(templateType.prefix === TemplateTypes.LAYOUT.prefix);
+      const notInList = 'notInList';
+      assert.throws(() => Utils.findTemplateType(notInList), Error, Text.parse(Text.utilNoTemplateTypeFound));
     });
   });
 });

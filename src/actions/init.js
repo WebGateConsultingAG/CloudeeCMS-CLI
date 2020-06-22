@@ -14,7 +14,7 @@
  * permissions and limitations under the License.
  *
  */
-import { TemplateTypes, DISTPATH, CDNPATH, SELECTVALUESPATH, TEMPLATEURL } from '../utils/constants';
+import { TemplateTypes, DISTPATH, CDNPATH, SELECTVALUESPATH, GLOBALSCRIPTSPATH } from '../utils/constants';
 import fs from 'fs';
 export class Init {
   static start() {
@@ -32,6 +32,9 @@ export class Init {
     }
     if (!fs.existsSync(SELECTVALUESPATH)) {
       fs.mkdirSync(SELECTVALUESPATH);
+    }
+    if (!fs.existsSync(GLOBALSCRIPTSPATH)) {
+      fs.mkdirSync(GLOBALSCRIPTSPATH);
     }
   }
 }

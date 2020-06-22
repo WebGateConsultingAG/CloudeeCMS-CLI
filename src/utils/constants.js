@@ -65,6 +65,8 @@ export const DISTPATH = 'Dist';
 export const CDNPATH = 'Cdn';
 export const TEMPLATEPATH = 'templates';
 export const SELECTVALUESPATH = 'SelectValues';
+export const GLOBALSCRIPTSPATH = 'GlobalScripts';
+export const GLOBALSCRIPTSFILENAME = 'globalFunctions.json';
 export const Actions = {
   INIT: 'init',
   BUILD: 'build',

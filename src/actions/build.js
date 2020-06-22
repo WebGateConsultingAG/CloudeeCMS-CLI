@@ -14,7 +14,7 @@
  * permissions and limitations under the License.
  *
  */
-import { TemplateTypes } from '../utils/constants';
+import { TemplateTypes, GLOBALSCRIPTSPATH } from '../utils/constants';
 import { Config } from './config';
 import { FileHelper } from '../utils/fileHelper';
 import { ConfigValidator } from '../utils/configValidator';
@@ -37,6 +37,9 @@ export class Builder {
     Message.info(Text.buildCreateFiles);
     this.createAndWriteTemplateFiles(configObject);
     Message.info(Text.buildCreateFilesComplete);
+    Message.info(Text.createGlobalScripts);
+    this.createGlobalScripts();
+    Message.info(Text.createGlobalScriptsComplete);
     Message.info(Text.buildCreateCDN);
     this.cdnPackage();
     Message.info(Text.buildCreateCDNComplete);
@@ -82,5 +85,13 @@ export class Builder {
   static createPackageInfo(configObject) {
     const packageJson = new Package(configObject);
     FileHelper.writePackageToDist(packageJson);
+  }
+  static createGlobalScripts() {
+    const scripts = [];
+    const scriptFiles = FileHelper.readFiles(GLOBALSCRIPTSPATH);
+    scriptFiles.forEach((scriptFile) => {
+      scripts.push(FileHelper.createGlobalScriptFromFile(scriptFile));
+    });
+    FileHelper.writeGlobalScriptFile(scripts);
   }
 }

@@ -15,15 +15,20 @@
  *
  */
 const assert = require('assert');
+const fs = require('fs');
+
 const { Field } = require('../src/models/field');
 const { GlobalScript } = require('../src/models/globalScript');
 const { TemplateConfig } = require('../src/models/TemplateConfig');
 const { Template } = require('../src/models/template');
-const { TemplateTypes, GLOBALSCRIPTSFILENAME } = require('../src/utils/constants');
+const { TemplateTypes, GLOBALSCRIPTSFILENAME, DISTPATH, CDNPATH, SELECTVALUESPATH, GLOBALSCRIPTSPATH } = require('../src/utils/constants');
 const { Config } = require('../src/actions/config');
 const { Package } = require('../src/models/package');
 const { Utils } = require('../src/utils/utils');
 const { Text } = require('../src/utils/texts');
+const { Init } = require('../src/actions/init');
+const { TestUtils } = require('./testUtils');
+
 describe('Models', function () {
   describe('#Field', function () {
     it('should have the correct values', function () {
@@ -84,7 +89,18 @@ describe('Models', function () {
 });
 describe('Actions', function () {
   describe('#Init', function () {
-    it('should create all needed folders', function () {});
+    it('should create all needed folders', function () {
+      Init.start();
+      Object.keys(TemplateTypes).forEach((key) => {
+        const path = TemplateTypes[key].path;
+        assert(fs.existsSync(path));
+        assert(fs.existsSync(DISTPATH));
+        assert(fs.existsSync(CDNPATH));
+        assert(fs.existsSync(SELECTVALUESPATH));
+        assert(fs.existsSync(GLOBALSCRIPTSPATH));
+      });
+      TestUtils.clearTestFolders();
+    });
   });
 });
 describe('Utils', function () {

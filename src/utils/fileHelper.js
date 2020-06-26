@@ -1,4 +1,4 @@
-/*
+/**
  * Copyright WebGate Consulting AG, 2020
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -34,6 +34,7 @@ import AdmZip from 'adm-zip';
 import { Text } from './texts';
 import { request } from 'http';
 import { GlobalScript } from '../models/globalScript';
+import { Utils } from './utils';
 
 export class FileHelper {
   constructor() {}
@@ -66,26 +67,18 @@ export class FileHelper {
       const unescapedFieldArr = body.split(FieldVars.UNESCAPEDSTART).slice(1);
       const fieldArr = escapedFieldArr.concat(unescapedFieldArr);
       fieldArr.forEach((field) => {
-        let fieldName = this.getFieldName(field);
+        let fieldName = Utils.getFieldName(field);
         if (fieldName) {
           if (fieldName.indexOf('doc.') === 0) {
             fieldName = fieldName.substr(4);
           }
-          if (fieldName.indexOf('env.') !== 0 && !this.fieldExist(fields, fieldName)) {
+          if (fieldName.indexOf('env.') !== 0 && !Utils.fieldExist(fields, fieldName)) {
             fields.push(Field.createField(fieldName));
           }
         }
       });
     }
     return fields;
-  }
-
-  static fieldExist(fields, fieldName) {
-    return fields.some((field) => field.fldName === fieldName);
-  }
-
-  static getFieldName(sequence) {
-    return sequence.indexOf(FieldVars.END) > 0 ? sequence.split(FieldVars.END)[0] : null;
   }
 
   static writeCloudeeFile(template) {

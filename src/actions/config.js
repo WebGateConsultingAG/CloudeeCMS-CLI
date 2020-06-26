@@ -20,33 +20,36 @@ import { CHARSET, CONFIGPATH, TemplateTypes, FieldTypes, SYSTEM_FIELDNAMES } fro
 import { FileHelper } from '../utils/fileHelper';
 import { TemplateConfig } from '../models/TemplateConfig';
 import { v4 as uuidv4 } from 'uuid';
+import { Utils } from '../utils/utils';
 export class Config {
   constructor() {}
   static start() {
-    let data = this.getBaseContent();
+    let config = this.getBaseContent();
     Object.keys(TemplateTypes).forEach((key) => {
       const templateType = TemplateTypes[key];
-      data[templateType.config] = this.updateConfigTemplates(data[templateType.config], templateType);
+      config[templateType.config] = this.updateConfigTemplates(config, templateType);
     });
-    this.writeConfig(data);
-    return data;
+    this.writeConfig(config);
+    return config;
   }
-  static writeConfig(data) {
-    fs.writeFileSync(CONFIGPATH, yaml.safeDump(data), CHARSET);
+  static writeConfig(config) {
+    fs.writeFileSync(CONFIGPATH, yaml.safeDump(config), CHARSET);
   }
-  static updateConfigTemplates(templateConfigs, templateType) {
+
+  static updateConfigTemplates(config, templateType) {
+    const templateConfigurations = config[templateType.config];
     const templateFiles = FileHelper.readFiles(templateType.path);
     const keys = [];
     templateFiles.forEach((templateFile) => {
       const template = FileHelper.createTemplateFromFile(templateFile, templateType);
       delete template.body;
       keys.push(template.okey);
-      const templateConfigArr = templateConfigs.filter((templateConfig) => {
+      const templateConfigArr = templateConfigurations.filter((templateConfig) => {
         return templateConfig.okey === template.okey;
       });
       if (templateConfigArr && templateConfigArr.length > 0) {
         const templateConfig = templateConfigArr[0];
-        this.chkAndAddFields(templateConfig, template.custFields);
+        this.chkAndAddFields(config, templateConfig, template.custFields);
       } else {
         const templateConfig = new TemplateConfig();
         templateConfig.okey = template.okey;
@@ -54,21 +57,23 @@ export class Config {
         templateConfig.custFields = template.custFields;
         templateConfig.id = templateType.prefix + uuidv4();
         templateConfig.title = null;
-        templateConfigs.push(templateConfig);
+        templateConfigurations.push(templateConfig);
       }
     });
-    return templateConfigs.filter((template) => {
-      return keys.includes(template.okey);
-    });
+    return !templateConfigurations
+      ? []
+      : templateConfigurations.filter((template) => {
+          return keys.includes(template.okey);
+        });
   }
 
-  static chkAndAddFields(templateConfig, foundFields) {
+  static chkAndAddFields(config, templateConfig, foundFields) {
     let fields = templateConfig.custFields;
     if (!fields) {
       fields = [];
     }
     foundFields.forEach((foundField) => {
-      if (!this.isSystemField(foundField.fldName)) {
+      if (!this.isSystemField(config, foundField.fldName)) {
         const existingFieldArr = fields.filter((configField) => {
           return (
             configField.fldName === foundField.fldName ||
@@ -76,29 +81,47 @@ export class Config {
           );
         });
         if (!existingFieldArr || existingFieldArr.length === 0) {
-          if (!FileHelper.fieldExist(fields, foundField)) {
+          if (!Utils.fieldExist(fields, foundField)) {
             fields.push(foundField);
           }
         }
       }
     });
+    this.checkForDropDown(fields);
+    this.checkForContainer(fields);
+    templateConfig.custFields = fields;
+  }
 
+  static checkForDropDown(fields) {
     fields.forEach((field) => {
       if (field.fldType === FieldTypes.DROPDOWN && !field.selectValueFile) {
         field.selectValueFile = null;
       }
     });
-    templateConfig.custFields = fields;
   }
 
-  static isSystemField(fieldName) {
-    return SYSTEM_FIELDNAMES.includes(fieldName);
+  static checkForContainer(fields) {
+    fields.forEach((field) => {
+      if (field.fldType === FieldTypes.CONTAINER && !field.restrictChilds) {
+        field.restrictChilds = false;
+        field.accepts = [];
+      }
+    });
+  }
+
+  static isSystemField(config, fieldName) {
+    return (
+      SYSTEM_FIELDNAMES.includes(fieldName) ||
+      fieldName.indexOf('env.') === 0 ||
+      (config.customVariables && config.customVariables.some((customVariable) => fieldName.indexOf(customVariable) === 0))
+    );
   }
 
   static getBaseContent() {
     let data = {
-      title: 'Cloudee Design',
-      description: 'CloudeeCMS Standard Design',
+      title: 'Your template title',
+      description: 'Your template description',
+      customVariables: [],
       layouts: [],
       layoutBlocks: [],
       microTemplates: [],

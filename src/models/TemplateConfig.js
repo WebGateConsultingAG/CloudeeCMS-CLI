@@ -20,8 +20,6 @@ export class TemplateConfig {
     this.title = null;
     this.descr = null;
     this.id = null;
-    this.restrictChilds = false;
-    this.accepts = [];
     this.custFields = null;
   }
 }

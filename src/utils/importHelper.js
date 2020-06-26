@@ -109,25 +109,23 @@ export class ImportHelper {
 
   static updateOrCreateConfig(jsonData, config) {
     const templateType = Utils.findTemplateType(jsonData.otype);
-    const okey = jsonData.okey ? jsonData.okey : this.cleanTitle(jsonData.title);
-    const templateConfigArr = config[templateType.config].filter((layout) => {
-      return layout.okey === okey;
-    });
-    let templateConfig = templateConfigArr[0];
-    if (!templateConfig) {
-      templateConfig = new TemplateConfig();
-      config[templateType.config].push(templateConfig);
-    }
-    templateConfig.okey = okey;
-    templateConfig.descr = jsonData.descr;
-    if (jsonData.custFields) {
-      templateConfig.custFields = jsonData.custFields;
-    }
-    templateConfig.id = jsonData.id;
-    templateConfig.title = jsonData.title;
-    if (jsonData.restrictChilds) {
-      templateConfig.restrictChilds = jsonData.restrictChilds;
-      this.accepts = jsonData.accepts;
+    if (templateType) {
+      const okey = jsonData.okey ? jsonData.okey : this.cleanTitle(jsonData.title);
+      const templateConfigArr = config[templateType.config].filter((layout) => {
+        return layout.okey === okey;
+      });
+      let templateConfig = templateConfigArr[0];
+      if (!templateConfig) {
+        templateConfig = new TemplateConfig();
+        config[templateType.config].push(templateConfig);
+      }
+      templateConfig.okey = okey;
+      templateConfig.descr = jsonData.descr;
+      if (jsonData.custFields) {
+        templateConfig.custFields = jsonData.custFields;
+      }
+      templateConfig.id = jsonData.id;
+      templateConfig.title = jsonData.title;
     }
   }
 

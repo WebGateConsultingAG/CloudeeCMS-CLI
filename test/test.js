@@ -25,7 +25,6 @@ const { TemplateTypes, GLOBALSCRIPTSFILENAME, DISTPATH, CDNPATH, SELECTVALUESPAT
 const { Config } = require('../src/actions/config');
 const { Package } = require('../src/models/package');
 const { Utils } = require('../src/utils/utils');
-const { Text } = require('../src/utils/texts');
 const { Init } = require('../src/actions/init');
 const { TestUtils } = require('./testUtils');
 
@@ -56,8 +55,6 @@ describe('Models', function () {
       assert(templateConfig.title === null);
       assert(templateConfig.descr === null);
       assert(templateConfig.id === null);
-      assert(templateConfig.restrictChilds === false);
-      assert(templateConfig.accepts.length === 0);
       assert(templateConfig.custFields === null);
     });
   });
@@ -112,7 +109,7 @@ describe('Utils', function () {
       assert(templateType.config === TemplateTypes.LAYOUT.config);
       assert(templateType.prefix === TemplateTypes.LAYOUT.prefix);
       const notInList = 'notInList';
-      assert.throws(() => Utils.findTemplateType(notInList), Error, Text.parse(Text.utilNoTemplateTypeFound));
+      assert(Utils.findTemplateType(notInList) === null);
     });
   });
 });

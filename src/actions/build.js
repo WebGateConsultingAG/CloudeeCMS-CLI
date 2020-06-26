@@ -65,10 +65,6 @@ export class Builder {
         template.title = configTemplateFile.title;
         template.descr = configTemplateFile.descr;
         template.id = configTemplateFile.id;
-        if (configTemplateFile.restrictChilds) {
-          template.restrictChilds = configTemplateFile.restrictChilds;
-          template.accepts = configTemplateFile.accepts;
-        }
         template.custFields = configTemplateFile.custFields.filter((custField) => {
           return !custField.ignore;
         });

@@ -1,4 +1,4 @@
-/*
+/**
  * Copyright WebGate Consulting AG, 2020
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -28,7 +28,6 @@ export class TemplateGetter {
       this.getPackageInfo(id);
     }
   }
-  //load package Info from CloudeeCMS S3
   static getPackageInfo(id) {
     Message.info(Text.packageInfoTitle, id);
     const path = TEMPLATEURL + '?action=getpkginfo&id=' + id;

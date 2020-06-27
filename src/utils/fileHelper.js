@@ -113,10 +113,12 @@ export class FileHelper {
     });
   }
 
-  static clearDistFolder() {
+  static clearDistFolder(configObject, deleteDesign) {
     const filesAndFolders = this.readFiles(DISTPATH);
     filesAndFolders.forEach((pathToRemove) => {
-      this.deleteRecursive(path.join(DISTPATH, pathToRemove));
+      if (pathToRemove !== this.getDesignZipFileName(configObject.designZipFileName) || deleteDesign) {
+        this.deleteRecursive(path.join(DISTPATH, pathToRemove));
+      }
     });
   }
 
@@ -178,10 +180,19 @@ export class FileHelper {
     }
   }
 
-  static buildCloudeeZip() {
+  static buildCloudeeZip(configObject) {
     const zip = new AdmZip();
     zip.addLocalFolder(DISTPATH);
-    zip.writeZip(path.join(DISTPATH, 'design.zip'));
+    zip.writeZip(path.join(DISTPATH, this.getDesignZipFileName(configObject.designZipFileName)));
+  }
+
+  static getDesignZipFileName(designZipFileName) {
+    if (designZipFileName) {
+      return designZipFileName.length < 5 || designZipFileName.substr(designZipFileName.length - 4) !== '.zip'
+        ? designZipFileName + '.zip'
+        : designZipFileName;
+    }
+    return 'design.zip';
   }
 
   static getPackageData(info) {

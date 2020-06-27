@@ -101,7 +101,7 @@ describe('Actions', function () {
   });
 });
 describe('Utils', function () {
-  describe('#Package', function () {
+  describe('#findTemplateType', function () {
     it('found template and get null if type is not in list', function () {
       const templateType = Utils.findTemplateType(TemplateTypes.LAYOUT.type);
       assert(templateType.type === TemplateTypes.LAYOUT.type);
@@ -110,6 +110,16 @@ describe('Utils', function () {
       assert(templateType.prefix === TemplateTypes.LAYOUT.prefix);
       const notInList = 'notInList';
       assert(Utils.findTemplateType(notInList) === null);
+    });
+  });
+  describe('#compressJS', function () {
+    it('Check if cloudee remove linebreaks, tabs and spaces in the right way.', function () {
+      const js = 'function test(){\n\r  let test = "Helo World";\n\r\ttest +=      " my friend";\n\rreturn test;}';
+      const compressedJS = Utils.compressJS(js);
+      assert(compressedJS === '- function test(){let test = "Helo World";test +=" my friend";return test;}');
+      eval(compressedJS.substr(1));
+      const testReturn = test();
+      assert(testReturn === 'Helo World my friend');
     });
   });
 });

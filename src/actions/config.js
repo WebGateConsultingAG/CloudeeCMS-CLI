@@ -121,6 +121,9 @@ export class Config {
     let data = {
       title: 'Your template title',
       description: 'Your template description',
+      author: 'your name',
+      license: '',
+      designZipFileName: 'design',
       customVariables: [],
       layouts: [],
       layoutBlocks: [],

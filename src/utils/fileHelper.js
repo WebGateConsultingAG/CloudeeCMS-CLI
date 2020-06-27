@@ -54,9 +54,12 @@ export class FileHelper {
 
   static createGlobalScriptFromFile(scriptFile) {
     const fileNameArray = scriptFile.split('.');
-    fileNameArray.pop();
+    const ending = fileNameArray.pop();
     const fName = fileNameArray.join('.');
-    const body = fs.readFileSync(path.join(GLOBALSCRIPTSPATH, scriptFile), CHARSET);
+    let body = fs.readFileSync(path.join(GLOBALSCRIPTSPATH, scriptFile), CHARSET);
+    if (ending === 'js') {
+      body = Utils.compressJS(body);
+    }
     return new GlobalScript(fName, body);
   }
 

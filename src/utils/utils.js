@@ -62,4 +62,14 @@ export class Utils {
   static getFieldName(sequence) {
     return sequence.indexOf(FieldVars.END) > 0 ? sequence.split(FieldVars.END)[0] : null;
   }
+
+  static compressJS(js) {
+    js = js.replace(/\n/g, '');
+    js = js.replace(/\r/g, '');
+    js = js.replace(/\t/g, '');
+    while (js.indexOf('  ') > -1) {
+      js = js.replace(/  /g, '');
+    }
+    return '- ' + js;
+  }
 }

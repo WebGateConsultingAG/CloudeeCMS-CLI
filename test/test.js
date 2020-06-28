@@ -122,4 +122,21 @@ describe('Utils', function () {
       assert(testReturn === 'Helo World my friend');
     });
   });
+  describe('#getFieldName', function () {
+    it('Found a fieldName from a pattern.', function () {
+      const patternSuccess = 'love}some other stuff';
+      assert(Utils.getFieldName(patternSuccess) === 'love');
+      const patternNoSucssess = 'nofieldVariable';
+      assert(Utils.getFieldName(patternNoSucssess) === null);
+    });
+  });
+  describe('#fieldExist', function () {
+    it('Check if an fieldName exists in an Array.', function () {
+      const field = new Field();
+      field.fldName = 'testField';
+      const fields = [field];
+      assert(Utils.fieldExist(fields, 'testField'));
+      assert(!Utils.fieldExist(fields, 'notInArray'));
+    });
+  });
 });

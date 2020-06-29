@@ -80,7 +80,7 @@ describe('Models', function () {
       assert(packageObject.description === config.description);
       assert(packageObject.categories.length === 1);
       assert(packageObject.categories[0] === 'Website Templates');
-      assert(packageObject.globalfunctions === GLOBALSCRIPTSFILENAME);
+      assert(packageObject.resources.globalfunctions === GLOBALSCRIPTSFILENAME);
     });
   });
 });

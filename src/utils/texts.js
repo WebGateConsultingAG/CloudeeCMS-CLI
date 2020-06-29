@@ -1,4 +1,4 @@
-/*
+/**
  * Copyright WebGate Consulting AG, 2020
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -38,7 +38,7 @@ Text.importExtractTemplatesComplete = 'Extraction of template files completed.';
 Text.importWriteConfig = 'Writing config file.';
 Text.importComplete = 'Import completed.';
 
-Text.utilNoTemplateTypeFound = 'No Template Type found for the given type %s';
+Text.utilNoTemplateTypeFound = 'No Template Type found for the given type %s thats possible if you import an backup file.';
 
 Text.helpTexts = [];
 Text.helpTexts.push('############# CloudeeCMS - CLI #############');
@@ -79,4 +79,4 @@ Text.validatorNoTitle = 'Your package has no title! Please define a title in you
 Text.validatorTemplateNoTitle = 'Your template %s must have a title!';
 Text.validatorTemplateNoDescription = 'Your template %s has no description!';
 Text.validatorTemplateNoId = 'Your template %s must have an id!';
-Text.validatorNoAccess = 'Your template %s has defined restrictedChilds but the accepts array is missing.';
+Text.validatorNoAcceptsDefined = 'Your field %s has defined restrictedChilds to true but the accepts array is missing.';

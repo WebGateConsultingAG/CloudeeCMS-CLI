@@ -39,12 +39,6 @@ export class ConfigValidator {
         Message.error(Text.parse(Text.validatorTemplateNoId, okey));
         valid = false;
       }
-      if (template.restrictChilds) {
-        if (!template.accepts) {
-          Message.error(Text.validatorNoAccess);
-          valid = false;
-        }
-      }
       if (!this.validateFields(template.custFields, okey)) {
         valid = false;
       }

@@ -33,7 +33,7 @@ export class Builder {
       return;
     }
     Message.info(Text.buildCleanDist);
-    FileHelper.clearDistFolder();
+    FileHelper.clearDistFolder(configObject, true);
     Message.info(Text.buildCreateFiles);
     this.createAndWriteTemplateFiles(configObject);
     Message.info(Text.buildCreateFilesComplete);
@@ -47,7 +47,8 @@ export class Builder {
     this.createPackageInfo(configObject);
     Message.info(Text.buildPackageInfoComplete);
     Message.info(Text.buildCreateDesignZip);
-    FileHelper.buildCloudeeZip();
+    FileHelper.buildCloudeeZip(configObject);
+    FileHelper.clearDistFolder(configObject, false);
     Message.info(Text.buildComplete);
   }
 
@@ -65,10 +66,6 @@ export class Builder {
         template.title = configTemplateFile.title;
         template.descr = configTemplateFile.descr;
         template.id = configTemplateFile.id;
-        if (configTemplateFile.restrictChilds) {
-          template.restrictChilds = configTemplateFile.restrictChilds;
-          template.accepts = configTemplateFile.accepts;
-        }
         template.custFields = configTemplateFile.custFields.filter((custField) => {
           return !custField.ignore;
         });

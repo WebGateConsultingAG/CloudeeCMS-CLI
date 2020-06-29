@@ -1,4 +1,4 @@
-/*
+/**
  * Copyright WebGate Consulting AG, 2020
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -34,6 +34,7 @@ import AdmZip from 'adm-zip';
 import { Text } from './texts';
 import { request } from 'http';
 import { GlobalScript } from '../models/globalScript';
+import { Utils } from './utils';
 
 export class FileHelper {
   constructor() {}
@@ -53,9 +54,12 @@ export class FileHelper {
 
   static createGlobalScriptFromFile(scriptFile) {
     const fileNameArray = scriptFile.split('.');
-    fileNameArray.pop();
+    const ending = fileNameArray.pop();
     const fName = fileNameArray.join('.');
-    const body = fs.readFileSync(path.join(GLOBALSCRIPTSPATH, scriptFile), CHARSET);
+    let body = fs.readFileSync(path.join(GLOBALSCRIPTSPATH, scriptFile), CHARSET);
+    if (ending === 'js') {
+      body = Utils.compressJS(body);
+    }
     return new GlobalScript(fName, body);
   }
 
@@ -66,12 +70,12 @@ export class FileHelper {
       const unescapedFieldArr = body.split(FieldVars.UNESCAPEDSTART).slice(1);
       const fieldArr = escapedFieldArr.concat(unescapedFieldArr);
       fieldArr.forEach((field) => {
-        let fieldName = this.getFieldName(field);
+        let fieldName = Utils.getFieldName(field);
         if (fieldName) {
           if (fieldName.indexOf('doc.') === 0) {
             fieldName = fieldName.substr(4);
           }
-          if (fieldName.indexOf('env.') !== 0 && !this.fieldExist(fields, fieldName)) {
+          if (fieldName.indexOf('env.') !== 0 && !Utils.fieldExist(fields, fieldName)) {
             fields.push(Field.createField(fieldName));
           }
         }
@@ -80,18 +84,10 @@ export class FileHelper {
     return fields;
   }
 
-  static fieldExist(fields, fieldName) {
-    return fields.some((field) => field.fldName === fieldName);
-  }
-
-  static getFieldName(sequence) {
-    return sequence.indexOf(FieldVars.END) > 0 ? sequence.split(FieldVars.END)[0] : null;
-  }
-
   static writeCloudeeFile(template) {
-    fs.writeFileSync(path.join(DISTPATH, TEMPLATEPATH, template.id + '.json'), JSON.stringify(template), CHARSET, function (err) {
-      if (e) {
-        Message.error(e);
+    fs.writeFileSync(path.join(DISTPATH, TEMPLATEPATH, template.id + '.json'), JSON.stringify(template), CHARSET, function (error) {
+      if (error) {
+        Message.error(error);
         Message.reset();
       }
     });
@@ -109,18 +105,20 @@ export class FileHelper {
   }
 
   static writePackageToDist(packageJson) {
-    fs.writeFileSync(path.join(DISTPATH, 'package.json'), JSON.stringify(packageJson), CHARSET, function (err) {
-      if (e) {
-        Message.error(e);
+    fs.writeFileSync(path.join(DISTPATH, 'package.json'), JSON.stringify(packageJson), CHARSET, function (error) {
+      if (error) {
+        Message.error(error);
         Message.reset();
       }
     });
   }
 
-  static clearDistFolder() {
+  static clearDistFolder(configObject, deleteDesign) {
     const filesAndFolders = this.readFiles(DISTPATH);
     filesAndFolders.forEach((pathToRemove) => {
-      this.deleteRecursive(path.join(DISTPATH, pathToRemove));
+      if (pathToRemove !== this.getDesignZipFileName(configObject.designZipFileName) || deleteDesign) {
+        this.deleteRecursive(path.join(DISTPATH, pathToRemove));
+      }
     });
   }
 
@@ -182,10 +180,19 @@ export class FileHelper {
     }
   }
 
-  static buildCloudeeZip() {
+  static buildCloudeeZip(configObject) {
     const zip = new AdmZip();
     zip.addLocalFolder(DISTPATH);
-    zip.writeZip(path.join(DISTPATH, 'design.zip'));
+    zip.writeZip(path.join(DISTPATH, this.getDesignZipFileName(configObject.designZipFileName)));
+  }
+
+  static getDesignZipFileName(designZipFileName) {
+    if (designZipFileName) {
+      return designZipFileName.length < 5 || designZipFileName.substr(designZipFileName.length - 4) !== '.zip'
+        ? designZipFileName + '.zip'
+        : designZipFileName;
+    }
+    return 'design.zip';
   }
 
   static getPackageData(info) {
@@ -196,7 +203,7 @@ export class FileHelper {
     var fileName = info.data.filename;
     request({ url: fileUrl, encoding: null }, function (err, resp, body) {
       if (err) throw err;
-      fs.writeFileSync(fileName, body, function (err) {
+      fs.writeFileSync(fileName, body, function () {
         Message.info(Text.packageDownloadComplete);
       });
       this.extractPackageData(fileName);

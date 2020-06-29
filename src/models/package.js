@@ -23,11 +23,11 @@ export class Package {
     this.categories = ['Website Templates'];
     this.packageformat = '1.0';
     this.cliVersion = '0.1.1';
-    this.globalfunctions = GLOBALSCRIPTSFILENAME;
     this.resources = {
       variables: config.environmentVariables,
       database: TEMPLATEPATH,
       filesCDN: CDNPATH,
+      globalfunctions: GLOBALSCRIPTSFILENAME,
     };
   }
 }

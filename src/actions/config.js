@@ -18,7 +18,7 @@ import fs from 'fs';
 import yaml from 'js-yaml';
 import { CHARSET, CONFIGPATH, TemplateTypes, FieldTypes, SYSTEM_FIELDNAMES } from '../utils/constants';
 import { FileHelper } from '../utils/fileHelper';
-import { TemplateConfig } from '../models/TemplateConfig';
+import { TemplateConfig } from '../models/templateConfig';
 import { v4 as uuidv4 } from 'uuid';
 import { Utils } from '../utils/utils';
 export class Config {

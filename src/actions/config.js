@@ -21,9 +21,13 @@ import { FileHelper } from '../utils/fileHelper';
 import { TemplateConfig } from '../models/templateConfig';
 import { v4 as uuidv4 } from 'uuid';
 import { Utils } from '../utils/utils';
+import { Message } from '../utils/message';
+import { Text } from '../utils/texts';
+import { EnvironmentVariable } from '../models/environmentVariable';
 export class Config {
   constructor() {}
   static start() {
+    Message.info(Text.configStart);
     let config = this.getBaseContent();
     Object.keys(TemplateTypes).forEach((key) => {
       const templateType = TemplateTypes[key];
@@ -52,9 +56,9 @@ export class Config {
         this.chkAndAddFields(config, templateConfig, template.custFields);
       } else {
         const templateConfig = new TemplateConfig();
+        this.chkAndAddFields(config, templateConfig, template.custFields);
         templateConfig.okey = template.okey;
         templateConfig.descr = null;
-        templateConfig.custFields = template.custFields;
         templateConfig.id = templateType.prefix + uuidv4();
         templateConfig.title = null;
         templateConfigurations.push(templateConfig);
@@ -73,7 +77,11 @@ export class Config {
       fields = [];
     }
     foundFields.forEach((foundField) => {
-      if (!this.isSystemField(config, foundField.fldName)) {
+      if (
+        !this.isSystemField(foundField.fldName) &&
+        !this.isEnvField(foundField.fldName) &&
+        !this.isCustomField(config, foundField.fldName)
+      ) {
         const existingFieldArr = fields.filter((configField) => {
           return (
             configField.fldName === foundField.fldName ||
@@ -85,6 +93,8 @@ export class Config {
             fields.push(foundField);
           }
         }
+      } else {
+        this.writeEnvVariables(config, foundField.fldName);
       }
     });
     this.checkForDropDown(fields);
@@ -92,6 +102,13 @@ export class Config {
     templateConfig.custFields = fields;
   }
 
+  static writeEnvVariables(config, fldName) {
+    if (!this.isSystemField(fldName) && this.isEnvField(fldName)) {
+      if (!config.environmentVariables.some((envVar) => envVar.variablename === fldName)) {
+        config.environmentVariables.push(EnvironmentVariable.createEnvironmentVariable(fldName));
+      }
+    }
+  }
   static checkForDropDown(fields) {
     fields.forEach((field) => {
       if (field.fldType === FieldTypes.DROPDOWN && !field.selectValueFile) {
@@ -109,12 +126,16 @@ export class Config {
     });
   }
 
-  static isSystemField(config, fieldName) {
-    return (
-      SYSTEM_FIELDNAMES.includes(fieldName) ||
-      fieldName.indexOf('env.') === 0 ||
-      (config.customVariables && config.customVariables.some((customVariable) => fieldName.indexOf(customVariable) === 0))
-    );
+  static isSystemField(fieldName) {
+    return SYSTEM_FIELDNAMES.includes(fieldName);
+  }
+
+  static isEnvField(fieldName) {
+    return fieldName.indexOf('env.') === 0;
+  }
+
+  static isCustomField(config, fieldName) {
+    return config.customVariables && config.customVariables.some((customVariable) => fieldName.indexOf(customVariable) === 0);
   }
 
   static getBaseContent() {

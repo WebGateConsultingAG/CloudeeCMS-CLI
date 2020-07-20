@@ -75,7 +75,7 @@ export class FileHelper {
           if (fieldName.indexOf('doc.') === 0) {
             fieldName = fieldName.substr(4);
           }
-          if (fieldName.indexOf('env.') !== 0 && !Utils.fieldExist(fields, fieldName)) {
+          if (!Utils.fieldExist(fields, fieldName)) {
             fields.push(Field.createField(fieldName));
           }
         }

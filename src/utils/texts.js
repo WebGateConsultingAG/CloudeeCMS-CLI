@@ -74,6 +74,7 @@ Text.cliUseHelp = 'Use cloudee --help for more information!';
 Text.configMissingFieldName = 'A fieldname in your template %s is empty!';
 Text.configFieldWrongType = 'The field %s in your template %s has no or an invalid fieldType. Fieldtype must be one of the following: %s!';
 Text.configFieldMissingTitle = 'The field %s in your template %s has no title attribute!';
+Text.configStart = 'Start Cloudee config';
 
 Text.validatorNoTitle = 'Your package has no title! Please define a title in your config.yaml';
 Text.validatorTemplateNoTitle = 'Your template %s must have a title!';

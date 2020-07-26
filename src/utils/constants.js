@@ -59,7 +59,7 @@ export const SYSTEM_FIELDNAMES = [
   'env.navtree',
   'myAuthorField',
 ];
-export const VERSION = '0.2.3';
+export const VERSION = '0.2.5';
 export const CONFIGPATH = 'config.yaml';
 export const DISTPATH = 'Dist';
 export const CDNPATH = 'Cdn';

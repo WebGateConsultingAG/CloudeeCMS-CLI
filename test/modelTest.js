@@ -1,7 +1,7 @@
 const assert = require('assert');
 const { Field } = require('../src/models/field');
 const { GlobalScript } = require('../src/models/globalScript');
-const { TemplateConfig } = require('../src/models/TemplateConfig');
+const { TemplateConfig } = require('../src/models/templateConfig');
 const { Template } = require('../src/models/template');
 const { TemplateTypes, GLOBALSCRIPTSFILENAME } = require('../src/utils/constants');
 const { Config } = require('../src/actions/config');

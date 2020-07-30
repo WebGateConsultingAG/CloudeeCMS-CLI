@@ -19,6 +19,8 @@ const assert = require('assert');
 const { Field } = require('../src/models/field');
 const { TemplateTypes } = require('../src/utils/constants');
 const { Utils } = require('../src/utils/utils');
+const { JSConverter } = require('../src/utils/jsConverter');
+const { CSSConverter } = require('../src/utils/cssConverter');
 
 describe('Utils', function () {
   describe('#findTemplateType', function () {
@@ -34,14 +36,25 @@ describe('Utils', function () {
   });
   describe('#compressJS', function () {
     it('Check if cloudee remove linebreaks, tabs and spaces in the right way.', function () {
-      const js = 'function test(){\n\r  let test = "Helo World";\n\r\ttest +=      " my friend";\n\rreturn test;}';
-      const compressedJS = Utils.compressJS(js);
-      assert(compressedJS === '- function test(){let test = "Helo World";test +=" my friend";return test;}');
-      eval(compressedJS.substr(1));
+      const js = 'function test(){\n\r  var test = "Helo World";\n\r\ttest +=      " my friend";\n\rreturn test;}';
+      const compressedJS = JSConverter.compress(js);
+      const compressedJSForPug = JSConverter.compressForPug(js);
+      assert(compressedJS === 'function test(){var r="Helo World";return r+=" my friend"}');
+      assert(compressedJSForPug === '- function test(){var r="Helo World";return r+=" my friend"}');
+      eval(compressedJS);
       const testReturn = test();
       assert(testReturn === 'Helo World my friend');
     });
   });
+
+  describe('#compressCSS', function () {
+    it('Check if cloudee remove linebreaks, tabs and spaces in the right way.', function () {
+      const css = 'body{\n\r\twidth:100%;\n\r\theight:100%;\n\r\t}\n\r\t.testClass{\n\r\twidth:100%;\n\r\theight:100%;\n\r\t}';
+      const compressedCSS = CSSConverter.compress(css);
+      assert(compressedCSS === 'body{width:100%;height:100%}.testClass{width:100%;height:100%}');
+    });
+  });
+
   describe('#getFieldName', function () {
     it('Found a fieldName from a pattern.', function () {
       const patternSuccess = 'love}some other stuff';

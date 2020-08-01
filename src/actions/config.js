@@ -145,6 +145,8 @@ export class Config {
       author: 'your name',
       license: '',
       designZipFileName: 'design',
+      compressCSS: true,
+      compressJS: true,
       customVariables: [],
       layouts: [],
       layoutBlocks: [],
@@ -154,7 +156,13 @@ export class Config {
     };
     if (fs.existsSync(CONFIGPATH)) {
       const fileContents = fs.readFileSync(CONFIGPATH, CHARSET);
-      data = yaml.safeLoad(fileContents);
+      let existingData = yaml.safeLoad(fileContents);
+      Object.keys(data).forEach((key) => {
+        if (!existingData[key]) {
+          existingData[key] = data[key];
+        }
+      });
+      return existingData;
     }
     return data;
   }

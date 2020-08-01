@@ -14,6 +14,8 @@
  * permissions and limitations under the License.
  *
  */
+import { VERSION } from './constants';
+
 export class Text {
   constructor() {}
   static parse(str) {
@@ -41,7 +43,7 @@ Text.importComplete = 'Import completed.';
 Text.utilNoTemplateTypeFound = 'No Template Type found for the given type %s thats possible if you import an backup file.';
 
 Text.helpTexts = [];
-Text.helpTexts.push('############# CloudeeCMS - CLI #############');
+Text.helpTexts.push('############# CloudeeCMS - CLI Version: ' + VERSION + ' #############');
 Text.helpTexts.push('Welcome to the CloudeeCMS CLI. Available commands:');
 Text.helpTexts.push('cloudee init - build your folder structure.');
 Text.helpTexts.push('cloudee get id - fetch a design template from the CloudeeCMS cloud and create the resources in your project.');

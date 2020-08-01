@@ -22,7 +22,6 @@ export class JSConverter {
    * @param {string} script
    */
   static compress(script) {
-    console.log(script);
     return UglifyJS.minify(script).code;
   }
   /**

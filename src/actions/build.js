@@ -41,7 +41,7 @@ export class Builder {
     this.createGlobalScripts();
     Message.info(Text.createGlobalScriptsComplete);
     Message.info(Text.buildCreateCDN);
-    this.cdnPackage();
+    this.cdnPackage(configObject);
     Message.info(Text.buildCreateCDNComplete);
     Message.info(Text.buildPackageInfo);
     this.createPackageInfo(configObject);
@@ -76,8 +76,8 @@ export class Builder {
       Message.info(Text.parse(Text.buildTemplateInfo, count, templateType.type));
     });
   }
-  static cdnPackage() {
-    FileHelper.writeCDNFiles();
+  static cdnPackage(configObject) {
+    FileHelper.writeCDNFiles(configObject);
   }
   static createPackageInfo(configObject) {
     const packageJson = new Package(configObject);

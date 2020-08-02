@@ -21,7 +21,7 @@ import AdmZip from 'adm-zip';
 import { CHARSET, CDNPATH } from './constants';
 import { Utils } from './utils';
 import { Message } from './message';
-import { TemplateConfig } from '../models/TemplateConfig';
+import { TemplateConfig } from '../models/templateConfig';
 import { Text } from './texts';
 
 export class ImportHelper {

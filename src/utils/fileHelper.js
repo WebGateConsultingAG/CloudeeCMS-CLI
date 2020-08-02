@@ -35,6 +35,8 @@ import { Text } from './texts';
 import { request } from 'http';
 import { GlobalScript } from '../models/globalScript';
 import { Utils } from './utils';
+import { JSConverter } from './jsConverter';
+import { CSSConverter } from './cssConverter';
 
 export class FileHelper {
   constructor() {}
@@ -58,7 +60,7 @@ export class FileHelper {
     const fName = fileNameArray.join('.');
     let body = fs.readFileSync(path.join(GLOBALSCRIPTSPATH, scriptFile), CHARSET);
     if (ending === 'js') {
-      body = Utils.compressJS(body);
+      body = JSConverter.compressForPug(body);
     }
     return new GlobalScript(fName, body);
   }
@@ -75,7 +77,7 @@ export class FileHelper {
           if (fieldName.indexOf('doc.') === 0) {
             fieldName = fieldName.substr(4);
           }
-          if (fieldName.indexOf('env.') !== 0 && !Utils.fieldExist(fields, fieldName)) {
+          if (!Utils.fieldExist(fields, fieldName)) {
             fields.push(Field.createField(fieldName));
           }
         }
@@ -162,21 +164,34 @@ export class FileHelper {
     return selVals;
   }
 
-  static writeCDNFiles() {
-    this.copyRecursive(CDNPATH, path.join(DISTPATH, CDNPATH));
+  static writeCDNFiles(configObject) {
+    this.copyRecursive(CDNPATH, path.join(DISTPATH, CDNPATH), configObject);
   }
 
-  static copyRecursive(pathToCopy, destination) {
+  static copyRecursive(pathToCopy, destination, configObject) {
     const exists = fs.existsSync(pathToCopy);
     const stats = exists && fs.statSync(pathToCopy);
     const isDirectory = exists && stats.isDirectory();
     if (isDirectory) {
       fs.mkdirSync(destination);
       fs.readdirSync(pathToCopy).forEach((childToCopy) => {
-        FileHelper.copyRecursive(path.join(pathToCopy, childToCopy), path.join(destination, childToCopy));
+        FileHelper.copyRecursive(path.join(pathToCopy, childToCopy), path.join(destination, childToCopy), configObject);
       });
     } else {
       fs.copyFileSync(pathToCopy, destination);
+      this.chkCompress(destination, configObject);
+    }
+  }
+
+  static chkCompress(file, configObject) {
+    if (configObject.compressJS && file.substr(file.length - 2) === 'js') {
+      let content = fs.readFileSync(file, 'utf8');
+      content = JSConverter.compress(content);
+      fs.writeFileSync(file, content);
+    } else if (configObject.compressCSS && file.substr(file.length - 3) === 'css') {
+      let content = fs.readFileSync(file, 'utf8');
+      content = CSSConverter.compress(content);
+      fs.writeFileSync(file, content);
     }
   }
 

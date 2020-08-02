@@ -14,6 +14,8 @@
  * permissions and limitations under the License.
  *
  */
+import { VERSION } from './constants';
+
 export class Text {
   constructor() {}
   static parse(str) {
@@ -41,7 +43,7 @@ Text.importComplete = 'Import completed.';
 Text.utilNoTemplateTypeFound = 'No Template Type found for the given type %s thats possible if you import an backup file.';
 
 Text.helpTexts = [];
-Text.helpTexts.push('############# CloudeeCMS - CLI #############');
+Text.helpTexts.push('############# CloudeeCMS - CLI Version: ' + VERSION + ' #############');
 Text.helpTexts.push('Welcome to the CloudeeCMS CLI. Available commands:');
 Text.helpTexts.push('cloudee init - build your folder structure.');
 Text.helpTexts.push('cloudee get id - fetch a design template from the CloudeeCMS cloud and create the resources in your project.');
@@ -74,6 +76,7 @@ Text.cliUseHelp = 'Use cloudee --help for more information!';
 Text.configMissingFieldName = 'A fieldname in your template %s is empty!';
 Text.configFieldWrongType = 'The field %s in your template %s has no or an invalid fieldType. Fieldtype must be one of the following: %s!';
 Text.configFieldMissingTitle = 'The field %s in your template %s has no title attribute!';
+Text.configStart = 'Start Cloudee config';
 
 Text.validatorNoTitle = 'Your package has no title! Please define a title in your config.yaml';
 Text.validatorTemplateNoTitle = 'Your template %s must have a title!';

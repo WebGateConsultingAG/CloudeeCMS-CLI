@@ -28,8 +28,18 @@ Copyright (C) 2011-2015 by Vitaly Puzrin
 
 uuid
 Licensed under MIT
-Available from https://github.com/uuidjs/uuid/blob/master/LICENSE.md
+https://github.com/uuidjs/uuid
 Copyright (c) 2010-2020 Robert Kieffer and other contributors
+
+CleanCSS
+Licensed under MIT
+Available from https://github.com/jakubpawlowicz/clean-css
+Copyright (C) 2017 JakubPawlowicz.com
+
+uglify-es
+Licensed under BSD license
+https://github.com/mishoo/UglifyJS/tree/harmony
+Copyright 2012-2018 (c) Mihai Bazon <mihai.bazon@gmail.com>
 
 prettier
 Licensed under MIT

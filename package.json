@@ -1,6 +1,6 @@
 {
   "name": "@webgate/cloudee-cli",
-  "version": "0.3.0",
+  "version": "0.3.1",
   "homepage": "https://www.cloudee-cms.com/",
   "description": "CloudeeCMS CLI template builder",
   "bin": {
@@ -23,9 +23,10 @@
   "dependencies": {
     "adm-zip": "^0.4.14",
     "clean-css": "^4.2.3",
-    "uglify-es": "^3.3.9",
     "esm": "^3.2.25",
     "js-yaml": "^3.13.1",
+    "lodash": "^4.17.19",
+    "uglify-es": "^3.3.9",
     "uuid": "^7.0.3"
   },
   "devDependencies": {
